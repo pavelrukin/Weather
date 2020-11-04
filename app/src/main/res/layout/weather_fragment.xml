@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_blue"
+    tools:context=".ui.weather.WeatherFragment">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_icon_wind"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_wind"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_icon_weather"
+        app:layout_constraintStart_toStartOf="@+id/iv_icon_humidity"
+        app:layout_constraintTop_toBottomOf="@+id/iv_icon_humidity" />
+
+    <TextView
+        android:id="@+id/tv_humidity2"
+
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        style="@style/TextViewPrimary"
+        android:text="5м/сек"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_icon_wind"
+        app:layout_constraintStart_toEndOf="@+id/iv_icon_wind"
+        app:layout_constraintTop_toTopOf="@+id/iv_icon_wind"
+        tools:text="5м/сек" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="ЧТ, 19 июля"
+
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="ЧТ, 19 июля" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_icon_weather"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_white_night_bright"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_date" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_icon_temp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:src="@drawable/ic_temp"
+        app:layout_constraintBottom_toTopOf="@+id/iv_icon_humidity"
+        app:layout_constraintStart_toEndOf="@+id/iv_icon_weather"
+        app:layout_constraintTop_toTopOf="@+id/iv_icon_weather" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_icon_humidity"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_humidity"
+        app:layout_constraintBottom_toTopOf="@+id/iv_icon_wind"
+        app:layout_constraintStart_toStartOf="@+id/iv_icon_temp"
+        app:layout_constraintTop_toBottomOf="@+id/iv_icon_temp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_icon_wind_destination"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_icon_wind_s"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_humidity2"
+        app:layout_constraintStart_toEndOf="@+id/tv_humidity2"
+        app:layout_constraintTop_toTopOf="@+id/tv_humidity2" />
+
+    <TextView
+        android:id="@+id/tv_max_temp"
+
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="27"
+        style="@style/TextViewPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_icon_temp"
+        app:layout_constraintStart_toEndOf="@+id/iv_icon_temp"
+        app:layout_constraintTop_toTopOf="@+id/iv_icon_temp"
+        tools:text="27" />
+
+    <TextView
+        android:id="@+id/tv_min_temp"
+        style="@style/TextViewPrimary"
+
+
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="19"
+        app:layout_constraintStart_toEndOf="@+id/tv_max_temp"
+        app:layout_constraintTop_toTopOf="@+id/tv_max_temp"
+        tools:text="19" />
+
+    <TextView
+        android:id="@+id/tv_humidity"
+
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        style="@style/TextViewPrimary"
+        android:text="55%"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_icon_humidity"
+        app:layout_constraintStart_toEndOf="@+id/iv_icon_humidity"
+        app:layout_constraintTop_toTopOf="@+id/iv_icon_humidity"
+        tools:text="55%" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_hourly"
+tools:itemCount="5"
+        tools:listitem="@layout/hourly_item"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_icon_weather" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_daily"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_hourly"
+        tools:listitem="@layout/daily_item" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

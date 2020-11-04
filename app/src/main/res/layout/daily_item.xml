@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/tv_daily_item_min_temp"
+
+        android:text="19"
+        style="@style/TextViewDaily"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_daily_item_max_temp"
+        app:layout_constraintEnd_toStartOf="@+id/iv_daily_item_weather"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_daily_item_max_temp"
+        app:layout_constraintTop_toTopOf="@+id/tv_daily_item_max_temp" />
+
+    <TextView
+        android:id="@+id/tv_daily_item_date"
+
+        style="@style/TextViewDaily"
+
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="ЧТ" />
+
+    <TextView
+        android:id="@+id/tv_daily_item_max_temp"
+
+        android:text="30"
+        style="@style/TextViewDaily"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_daily_item_date"
+        app:layout_constraintEnd_toStartOf="@+id/tv_daily_item_min_temp"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_daily_item_date"
+        app:layout_constraintTop_toTopOf="@+id/tv_daily_item_date" />
+
+    <ImageView
+        android:background="@color/black"
+        android:id="@+id/iv_daily_item_weather"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_white_night_shower"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_daily_item_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_daily_item_date" />
+</androidx.constraintlayout.widget.ConstraintLayout>
