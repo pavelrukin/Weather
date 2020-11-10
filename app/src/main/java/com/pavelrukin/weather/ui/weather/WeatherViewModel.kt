@@ -15,7 +15,10 @@ import java.io.IOException
 
 class WeatherViewModel(val repository: WeatherRepository, app: WeatherApp) :
     AndroidViewModel(app) {
-
+val cityName = MutableLiveData<String>()
+ /*   fun cityName(cityName: String){
+        cityName.value = cityName
+    }*/
     val latitude = MutableLiveData<Double>()
     val longitude = MutableLiveData<Double>()
 

@@ -98,7 +98,7 @@ class WeatherFragment : Fragment() {
 
 
     fun fetchWeatherFromMap() {
-        if (args!=null){
+        if ( args.longitude != null){
 
             val latitude = args.latitude?.toDouble()
             val longitude = args.longitude?.toDouble()
@@ -158,6 +158,9 @@ class WeatherFragment : Fragment() {
             when (response) {
                 is Resource.Success -> {
                     response.data?.let { result ->
+                        if (result!=null){
+
+
                         showView()
                         binding.tvMinTemp.text = result.daily[0].temp.min.roundToInt()
                             .toString() + getString(R.string.celsius)
@@ -310,7 +313,7 @@ class WeatherFragment : Fragment() {
                         }
 
                     }
-
+                    }
 
                 }
                 is Resource.Error -> {
