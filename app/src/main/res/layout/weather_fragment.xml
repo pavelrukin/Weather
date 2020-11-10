@@ -14,11 +14,22 @@
         tools:context=".ui.weather.WeatherFragment">
 
 
-
+        <TextView
+            android:id="@+id/tv_city_name"
+            style="@style/TextViewPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_date"
+            app:layout_constraintStart_toEndOf="@+id/tv_date"
+            app:layout_constraintTop_toTopOf="@+id/tv_date"
+            tools:text="America/Nuuk" />
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_icon_wind"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            tools:visibility="visible"
             android:src="@drawable/ic_wind"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/iv_icon_weather"
@@ -42,7 +53,7 @@
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            tools:visibility="visible"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
@@ -59,9 +70,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            tools:src="@drawable/ic_white_night_bright"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/rv_hourly"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_date" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_date"
+            tools:src="@drawable/ic_white_night_bright" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_icon_temp"
@@ -69,6 +82,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:visibility="gone"
+            tools:visibility="visible"
             android:layout_marginLeft="16dp"
             android:src="@drawable/ic_temp"
             app:layout_constraintBottom_toTopOf="@+id/iv_icon_humidity"
@@ -80,6 +94,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:visibility="gone"
+            tools:visibility="visible"
             android:src="@drawable/ic_humidity"
             app:layout_constraintBottom_toTopOf="@+id/iv_icon_wind"
             app:layout_constraintStart_toStartOf="@+id/iv_icon_temp"
@@ -110,19 +125,15 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_min_temp"
             style="@style/TextViewPrimary"
-
-
             app:layout_constraintStart_toEndOf="@+id/tv_max_temp"
             app:layout_constraintTop_toTopOf="@+id/tv_max_temp"
             tools:text="19" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_humidity"
-
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             style="@style/TextViewPrimary"
-
             app:layout_constraintBottom_toBottomOf="@+id/iv_icon_humidity"
             app:layout_constraintStart_toEndOf="@+id/iv_icon_humidity"
             app:layout_constraintTop_toTopOf="@+id/iv_icon_humidity"
@@ -132,21 +143,22 @@
             android:id="@+id/rv_hourly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/rv_daily"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_icon_weather"
-            tools:itemCount="5"
-            tools:listitem="@layout/hourly_item" />
+            tools:itemCount="24"
+            tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+
+            tools:listitem="@layout/hourly_item"
+            tools:orientation="horizontal" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_daily"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_hourly" />
-        "
             tools:itemCount="7"
             tools:listitem="@layout/daily_item" />
 

@@ -1,5 +1,7 @@
 package com.pavelrukin.weather.ui.weather
 
+import android.location.Geocoder
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -12,23 +14,10 @@ import com.pavelrukin.weather.utils.extensions.isConnected
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
+import java.util.*
 
 class WeatherViewModel(val repository: WeatherRepository, app: WeatherApp) :
     AndroidViewModel(app) {
-val cityName = MutableLiveData<String>()
- /*   fun cityName(cityName: String){
-        cityName.value = cityName
-    }*/
-    val latitude = MutableLiveData<Double>()
-    val longitude = MutableLiveData<Double>()
-
-    fun latitude(itemLat: Double ) {
-        latitude.value =  itemLat
-    }
-
-    fun longitude(itemLon: Double ) {
-        latitude.value =  itemLon
-    }
 
     val currentWeather: MutableLiveData<Resource<CurrentResponse>> = MutableLiveData()
     var currentWeatherResponse: CurrentResponse? = null
@@ -60,10 +49,6 @@ val cityName = MutableLiveData<String>()
             response.body()?.let { resultResponse ->
                 if (currentWeatherResponse == null) {
                     currentWeatherResponse = resultResponse
-                } else {
-                    val old = currentWeatherResponse
-                    val new = resultResponse
-
                 }
                 return Resource.Success(resultResponse)
             }
@@ -84,7 +69,7 @@ val cityName = MutableLiveData<String>()
         } catch (t: Throwable) {
             when (t) {
                 is IOException -> oneCallWeather.postValue(Resource.Error("Network Failure"))
-                is Exception -> oneCallWeather.postValue(Resource.Error("Exception ${t.localizedMessage}"))
+             //   is Exception -> oneCallWeather.postValue(Resource.Error("Exception ${t.localizedMessage}"))
                 else ->  oneCallWeather.postValue(Resource.Error("Conversion Error ${t.localizedMessage}"))
             }
         }
@@ -109,6 +94,19 @@ val cityName = MutableLiveData<String>()
         return Resource.Error(response.message())
     }
 
+    fun getCityName(latitude: Double, longitude: Double): String {
+        var cityName = ""
+        val geocoder = Geocoder(getApplication<WeatherApp>(), Locale.getDefault())
+        val adress = geocoder.getFromLocation(latitude, longitude, 1)
+        try{
+            if(adress[0].locality != null) {
+                cityName = adress[0].locality
+            }else{ }
+        }catch(e:IOException) {
+            Log.d("TAG_ViewModel","getCity $e")
+        }
+        return   cityName
+    }
 
 
 

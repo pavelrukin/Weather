@@ -19,6 +19,7 @@
             android:id="@+id/iv_icon_wind"
             android:layout_width="24dp"
             android:visibility="gone"
+            tools:visibility="visible"
             android:layout_height="24dp"
             android:src="@drawable/ic_wind"
             app:layout_constraintBottom_toBottomOf="@+id/iv_icon_weather"
@@ -39,14 +40,16 @@
             tools:text="5м/сек" />
 
         <TextView
-
             android:id="@+id/tv_city_name"
+            style="@style/TextViewPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_date"
             app:layout_constraintStart_toEndOf="@+id/tv_date"
-            app:layout_constraintTop_toTopOf="@+id/tv_date" />
+            app:layout_constraintTop_toTopOf="@+id/tv_date"
+            tools:text="America/Nuuk" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_date"
@@ -64,12 +67,12 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_icon_weather"
+            tools:src="@drawable/ic_weather"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_date" />
 
@@ -79,6 +82,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:visibility="gone"
+            tools:visibility="visible"
             android:layout_marginLeft="16dp"
             android:src="@drawable/ic_temp"
             app:layout_constraintBottom_toTopOf="@+id/iv_icon_humidity"
@@ -90,6 +94,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:visibility="gone"
+            tools:visibility="visible"
             android:src="@drawable/ic_humidity"
             app:layout_constraintBottom_toTopOf="@+id/iv_icon_wind"
             app:layout_constraintStart_toStartOf="@+id/iv_icon_temp"
@@ -99,18 +104,17 @@
             android:id="@+id/iv_icon_wind_destination"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            tools:visibility="visible"
+            tools:src="@drawable/ic_icon_wind_n"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-
             app:layout_constraintStart_toEndOf="@+id/tv_wind_text"
             app:layout_constraintTop_toTopOf="@+id/tv_wind_text" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_max_temp"
-
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-
             style="@style/TextViewPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/iv_icon_temp"
             app:layout_constraintStart_toEndOf="@+id/iv_icon_temp"
@@ -120,19 +124,15 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_min_temp"
             style="@style/TextViewPrimary"
-
-
             app:layout_constraintStart_toEndOf="@+id/tv_max_temp"
             app:layout_constraintTop_toTopOf="@+id/tv_max_temp"
             tools:text="19" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_humidity"
-
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             style="@style/TextViewPrimary"
-
             app:layout_constraintBottom_toBottomOf="@+id/iv_icon_humidity"
             app:layout_constraintStart_toEndOf="@+id/iv_icon_humidity"
             app:layout_constraintTop_toTopOf="@+id/iv_icon_humidity"
@@ -140,31 +140,27 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_hourly"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:itemCount="5"
-            tools:listitem="@layout/hourly_item" />
+            tools:itemCount="24"
+            tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/hourly_item"
+            tools:orientation="horizontal" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_daily"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginLeft="32dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
             app:layout_constraintBottom_toTopOf="@+id/rv_hourly"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_icon_wind_destination"
             app:layout_constraintTop_toTopOf="parent"
+            tools:itemCount="7"
             tools:listitem="@layout/daily_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
