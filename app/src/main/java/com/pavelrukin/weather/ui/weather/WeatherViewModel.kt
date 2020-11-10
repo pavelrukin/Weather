@@ -16,6 +16,16 @@ import java.io.IOException
 class WeatherViewModel(val repository: WeatherRepository, app: WeatherApp) :
     AndroidViewModel(app) {
 
+    val latitude = MutableLiveData<Double>()
+    val longitude = MutableLiveData<Double>()
+
+    fun latitude(itemLat: Double ) {
+        latitude.value =  itemLat
+    }
+
+    fun longitude(itemLon: Double ) {
+        latitude.value =  itemLon
+    }
 
     val currentWeather: MutableLiveData<Resource<CurrentResponse>> = MutableLiveData()
     var currentWeatherResponse: CurrentResponse? = null

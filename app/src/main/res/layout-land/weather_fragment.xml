@@ -68,7 +68,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            android:src="@drawable/ic_white_night_bright"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_date" />
 
@@ -98,7 +98,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:src="@drawable/ic_icon_wind_s"
+
             app:layout_constraintStart_toEndOf="@+id/tv_wind_text"
             app:layout_constraintTop_toTopOf="@+id/tv_wind_text" />
 
@@ -138,7 +138,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_hourly"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
@@ -147,7 +147,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_icon_weather"
             tools:itemCount="5"
             tools:listitem="@layout/hourly_item" />
 

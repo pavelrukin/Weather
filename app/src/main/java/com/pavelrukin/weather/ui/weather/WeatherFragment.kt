@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -47,6 +47,7 @@ import kotlin.math.roundToInt
 
 class WeatherFragment : Fragment() {
     val TAG = "WEATHER_FRAGMENT_TAG"
+    val args: WeatherFragmentArgs by navArgs()
 
     private lateinit var binding: WeatherFragmentBinding
     private val viewModel: WeatherViewModel by viewModel()
@@ -70,7 +71,7 @@ class WeatherFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.weather_menu_search_city -> seacrhView()
-            R.id.weather_menu_your_current_location -> obtieneLocalizacion()
+            R.id.weather_menu_your_current_location -> getCurrentLocation()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -87,26 +88,48 @@ class WeatherFragment : Fragment() {
         Places.initialize(activity?.applicationContext!!, Constants.GOOGLE_API_KEY)
         // Create a new PlacesClient instance
         placesClient = Places.createClient(activity?.applicationContext!!)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity?.applicationContext!!)
+        fusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(activity?.applicationContext!!)
+
+         fetchWeatherFromMap()
 
     }
 
-    private fun obtieneLocalizacion(){
+
+
+    fun fetchWeatherFromMap() {
+        if (args!=null){
+
+            val latitude = args.latitude?.toDouble()
+            val longitude = args.longitude?.toDouble()
+            viewModel.getOneCallWeather(lat = latitude, lon = longitude)
+        }
+
+
+    }
+
+    private fun getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(
-                activity?.applicationContext!!, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                activity?.applicationContext!!, Manifest.permission.ACCESS_FINE_LOCATION
+            ) !=
             PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                activity?.applicationContext!!, Manifest.permission.ACCESS_COARSE_LOCATION) !=
-            PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), permissionCode)
+                activity?.applicationContext!!, Manifest.permission.ACCESS_COARSE_LOCATION
+            ) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), permissionCode
+            )
             return
         }
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
-                viewModel.getOneCallWeather(lat=location?.latitude ,lon=location?.longitude)
+                viewModel.getOneCallWeather(lat = location?.latitude, lon = location?.longitude)
 
             }
     }
+
     fun seacrhView() {
         val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
         val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
@@ -131,11 +154,11 @@ class WeatherFragment : Fragment() {
     }
 
     private fun fetchOneCallWeather() {
-        viewModel.oneCallWeather.observe(viewLifecycleOwner, Observer { response ->
+        viewModel.oneCallWeather.observe(viewLifecycleOwner,   { response ->
             when (response) {
                 is Resource.Success -> {
                     response.data?.let { result ->
-
+                        showView()
                         binding.tvMinTemp.text = result.daily[0].temp.min.roundToInt()
                             .toString() + getString(R.string.celsius)
                         binding.tvHumidity.text =
@@ -292,11 +315,13 @@ class WeatherFragment : Fragment() {
                 }
                 is Resource.Error -> {
                     response.message?.let { message ->
+                        hideView()
                         Toast.makeText(activity, "An error: $message", Toast.LENGTH_SHORT).show()
                         Log.i(TAG, "Message error === $message")
                     }
                 }
                 is Resource.Loading -> {
+                    hideView()
                     //TODO create progressBar
                 }
             }
@@ -317,7 +342,7 @@ class WeatherFragment : Fragment() {
                                     "time ${place.addressComponents} " +
                                     "latlng ${place.latLng?.latitude.toString()} ||  ${place.latLng?.longitude.toString()} "
                         )
-                        binding.tvCityName.text = place.name
+
                         viewModel.getOneCallWeather(
                             lat = place.latLng?.latitude,
                             lon = place.latLng?.longitude
@@ -342,7 +367,21 @@ class WeatherFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    fun hideView() {
+        binding.apply {
+            ivIconTemp.visibility = View.INVISIBLE
+            ivIconHumidity.visibility = View.INVISIBLE
+            ivIconWind.visibility = View.INVISIBLE
+        }
+    }
 
+    fun showView() {
+        binding.apply {
+            ivIconTemp.visibility = View.VISIBLE
+            ivIconHumidity.visibility = View.VISIBLE
+            ivIconWind.visibility = View.VISIBLE
+        }
+    }
 }
 
 

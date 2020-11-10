@@ -37,16 +37,6 @@
             app:layout_constraintVertical_bias="0.0"
             tools:text="5м/сек" />
 
-        <TextView
-
-            android:id="@+id/tv_city_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            app:layout_constraintStart_toEndOf="@+id/tv_date"
-            app:layout_constraintTop_toTopOf="@+id/tv_date" />
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
@@ -68,7 +58,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            android:src="@drawable/ic_white_night_bright"
+            tools:src="@drawable/ic_white_night_bright"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_date" />
 
@@ -98,7 +88,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:src="@drawable/ic_icon_wind_s"
+
             app:layout_constraintStart_toEndOf="@+id/tv_wind_text"
             app:layout_constraintTop_toTopOf="@+id/tv_wind_text" />
 
@@ -137,23 +127,23 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_hourly"
-            tools:itemCount="5"
-            tools:listitem="@layout/hourly_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_icon_weather" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_icon_weather"
+            tools:itemCount="5"
+            tools:listitem="@layout/hourly_item" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_daily"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            tools:itemCount="7"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_hourly"
             tools:listitem="@layout/daily_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
