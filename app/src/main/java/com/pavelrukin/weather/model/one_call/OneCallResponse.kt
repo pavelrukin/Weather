@@ -96,7 +96,7 @@ data class OneCallResponse(
         @SerializedName("weather")
         var weather: List<Weather>,
         @SerializedName("pop")
-        var pop: Int, // 0
+        var pop: Double, // 0
         @SerializedName("rain")
         var rain: Rain
     ) {

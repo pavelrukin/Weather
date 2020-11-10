@@ -139,11 +139,12 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_daily"
             android:layout_width="0dp"
-            tools:itemCount="7"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rv_hourly" />
+        "
+            tools:itemCount="7"
             tools:listitem="@layout/daily_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

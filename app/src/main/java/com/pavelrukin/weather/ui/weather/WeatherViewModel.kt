@@ -80,8 +80,9 @@ class WeatherViewModel(val repository: WeatherRepository, app: WeatherApp) :
             }
         } catch (t: Throwable) {
             when (t) {
-                is IOException -> oneCallWeather.postValue(Resource.Error("Networ Failure"))
-                else -> oneCallWeather.postValue(Resource.Error("Conversion Error"))
+                is IOException -> oneCallWeather.postValue(Resource.Error("Network Failure"))
+                is Exception -> oneCallWeather.postValue(Resource.Error("Exception ${t.localizedMessage}"))
+                else ->  oneCallWeather.postValue(Resource.Error("Conversion Error ${t.localizedMessage}"))
             }
         }
     }
