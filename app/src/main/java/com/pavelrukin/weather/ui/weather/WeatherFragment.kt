@@ -1,25 +1,30 @@
 package com.pavelrukin.weather.ui.weather
 
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
@@ -47,6 +52,12 @@ class WeatherFragment : Fragment() {
     private val viewModel: WeatherViewModel by viewModel()
     lateinit var hourlyAdapter: HourlyAdapter
     lateinit var dailyAdapter: DailyAdapter
+
+    private val permissionCode = 101
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    lateinit var placesClient: PlacesClient
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,23 +70,11 @@ class WeatherFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.weather_menu_search_city -> seacrhView()
-            R.id.weather_menu_your_current_location -> {
-                Toast.makeText(
-                    requireActivity(),
-                    "your_current_location",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            R.id.weather_menu_your_current_location -> obtieneLocalizacion()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    fun seacrhView() {
-        val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-            .build(activity?.applicationContext!!)
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -87,9 +86,32 @@ class WeatherFragment : Fragment() {
         // Initialize the SDK
         Places.initialize(activity?.applicationContext!!, Constants.GOOGLE_API_KEY)
         // Create a new PlacesClient instance
-        val placesClient = Places.createClient(activity?.applicationContext!!)
+        placesClient = Places.createClient(activity?.applicationContext!!)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity?.applicationContext!!)
 
+    }
 
+    private fun obtieneLocalizacion(){
+        if (ActivityCompat.checkSelfPermission(
+                activity?.applicationContext!!, Manifest.permission.ACCESS_FINE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                activity?.applicationContext!!, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+            PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), permissionCode)
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                viewModel.getOneCallWeather(lat=location?.latitude ,lon=location?.longitude)
+
+            }
+    }
+    fun seacrhView() {
+        val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+            .build(activity?.applicationContext!!)
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
     }
 
     private fun initHourlyRV() {
@@ -136,13 +158,13 @@ class WeatherFragment : Fragment() {
                                 in 1..89 -> Picasso.get().load(R.drawable.ic_icon_wind_ne)
                                     .placeholder(R.drawable.ic_icon_wind_ne)
                                     .into(binding.ivIconWindDestination)
-                                 90 -> Picasso.get().load(R.drawable.ic_icon_wind_e)
+                                90 -> Picasso.get().load(R.drawable.ic_icon_wind_e)
                                     .placeholder(R.drawable.ic_icon_wind_e)
                                     .into(binding.ivIconWindDestination)
                                 in 91..179 -> Picasso.get().load(R.drawable.ic_icon_wind_se)
                                     .placeholder(R.drawable.ic_icon_wind_se)
                                     .into(binding.ivIconWindDestination)
-                                 180 -> Picasso.get().load(R.drawable.ic_icon_wind_s)
+                                180 -> Picasso.get().load(R.drawable.ic_icon_wind_s)
                                     .placeholder(R.drawable.ic_icon_wind_s)
                                     .into(binding.ivIconWindDestination)
                                 in 181..269 -> Picasso.get().load(R.drawable.ic_icon_wind_ws)
@@ -296,7 +318,7 @@ class WeatherFragment : Fragment() {
                                     "latlng ${place.latLng?.latitude.toString()} ||  ${place.latLng?.longitude.toString()} "
                         )
                         binding.tvCityName.text = place.name
-                        viewModel.getOneCallWeatherHourly(
+                        viewModel.getOneCallWeather(
                             lat = place.latLng?.latitude,
                             lon = place.latLng?.longitude
 
@@ -324,16 +346,3 @@ class WeatherFragment : Fragment() {
 }
 
 
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
-        }
-    })
-}

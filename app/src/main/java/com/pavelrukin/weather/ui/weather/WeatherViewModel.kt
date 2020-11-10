@@ -23,20 +23,6 @@ class WeatherViewModel(val repository: WeatherRepository, app: WeatherApp) :
      val oneCallWeather: MutableLiveData<Resource<OneCallResponse>> = MutableLiveData()
     var oneCallWeatherResponse: OneCallResponse? = null
 
-    /*    fun getCurrentWeather(searchQuery: String) = viewModelScope.launch {
-            currentWeather.postValue(Resource.Loading())
-            val response = repository.getCurrentWeather(searchQuery)
-            currentWeather.postValue(handledCurrentWeather(response))
-        }
-
-        private fun handledCurrentWeather(response: Response<CurrentResponse>): Resource<CurrentResponse> {
-            if (response.isSuccessful) {
-                response.body()?.let { resultResponse ->
-                    return Resource.Success(resultResponse)
-                }
-            }
-            return Resource.Error(response.message())
-        }*/
     fun getCurrentWeather(cityName: String?) = viewModelScope.launch {
         currentWeather.postValue(Resource.Loading())
         try {
@@ -72,7 +58,7 @@ class WeatherViewModel(val repository: WeatherRepository, app: WeatherApp) :
         return Resource.Error(response.message())
     }
 
-    fun getOneCallWeatherHourly(lat: Double?, lon: Double?) = viewModelScope.launch {
+    fun getOneCallWeather(lat: Double?, lon: Double?) = viewModelScope.launch {
         oneCallWeather.postValue(Resource.Loading())
         try {
             if (getApplication<WeatherApp>().isConnected) {
@@ -108,40 +94,7 @@ class WeatherViewModel(val repository: WeatherRepository, app: WeatherApp) :
         }
         return Resource.Error(response.message())
     }
-   /*    fun getOneCallWeatherDaily(lat: Double, lon: Double) = viewModelScope.launch {
-        oneCallWeather.postValue(Resource.Loading())
-        try {
-            if (getApplication<WeatherApp>().isConnected) {
-                oneCallWeather.postValue(Resource.Loading())
-                val response = repository.getOneCallWeather(lat, lon)
-                oneCallWeather.postValue(handledOneCallWeatherDaily(response))
-            } else {
-                oneCallWeather.postValue(Resource.Error("No internet connection"))
-            }
-        } catch (t: Throwable) {
-            when (t) {
-                is IOException -> oneCallWeather.postValue(Resource.Error("Networ Failure"))
-                else -> oneCallWeather.postValue(Resource.Error("Conversion Error"))
-            }
-        }
-    }
 
-    private fun handledOneCallWeatherDaily(response: Response<OneCallResponse>): Resource<OneCallResponse>? {
-        if (response.isSuccessful) {
-            response.body()?.let { resultResponse ->
-                if (oneCallWeatherResponse == null) {
-                    oneCallWeatherResponse = resultResponse
-                } else {
-                    val old = oneCallWeatherResponse?.daily
-                    val new = resultResponse.daily
-                    old?.addAll(new)
-                }
-                return Resource.Success(resultResponse)
-            }
-        }
-        return Resource.Error(response.message())
-    }
-*/
 
 
 
