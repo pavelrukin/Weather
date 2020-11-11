@@ -13,6 +13,10 @@ class Constants {
 
         const val WEATHER_ICON ="https://openweathermap.org/img/w/"
         const val PNG =".png"
+
+
+        const val LOCATION_REQUEST = 100
+        const val GPS_REQUEST = 101
     }
 
 

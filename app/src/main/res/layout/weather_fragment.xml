@@ -13,6 +13,18 @@
         android:background="@color/dark_blue"
         tools:context=".ui.weather.WeatherFragment">
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:theme="@style/progressColor"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/tv_city_name"
@@ -25,16 +37,17 @@
             app:layout_constraintStart_toEndOf="@+id/tv_date"
             app:layout_constraintTop_toTopOf="@+id/tv_date"
             tools:text="America/Nuuk" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_icon_wind"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            tools:visibility="visible"
             android:src="@drawable/ic_wind"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/iv_icon_weather"
             app:layout_constraintStart_toStartOf="@+id/iv_icon_humidity"
-            app:layout_constraintTop_toBottomOf="@+id/iv_icon_humidity" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_icon_humidity"
+            tools:visibility="visible" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_wind_text"
@@ -53,7 +66,6 @@
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:visibility="visible"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
@@ -61,7 +73,8 @@
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="ЧТ, 19 июля" />
+            tools:text="ЧТ, 19 июля"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_icon_weather"
@@ -70,35 +83,35 @@
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            tools:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/rv_hourly"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_date"
-            tools:src="@drawable/ic_white_night_bright" />
+            tools:src="@drawable/ic_white_night_bright"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_icon_temp"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
-            android:visibility="gone"
-            tools:visibility="visible"
             android:layout_marginLeft="16dp"
             android:src="@drawable/ic_temp"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/iv_icon_humidity"
             app:layout_constraintStart_toEndOf="@+id/iv_icon_weather"
-            app:layout_constraintTop_toTopOf="@+id/iv_icon_weather" />
+            app:layout_constraintTop_toTopOf="@+id/iv_icon_weather"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_icon_humidity"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:visibility="gone"
-            tools:visibility="visible"
             android:src="@drawable/ic_humidity"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/iv_icon_wind"
             app:layout_constraintStart_toStartOf="@+id/iv_icon_temp"
-            app:layout_constraintTop_toBottomOf="@+id/iv_icon_temp" />
+            app:layout_constraintTop_toBottomOf="@+id/iv_icon_temp"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_icon_wind_destination"
@@ -113,10 +126,10 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_max_temp"
 
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-
             style="@style/TextViewPrimary"
+            android:layout_marginStart="16dp"
+
+            android:layout_marginLeft="16dp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_icon_temp"
             app:layout_constraintStart_toEndOf="@+id/iv_icon_temp"
             app:layout_constraintTop_toTopOf="@+id/iv_icon_temp"
@@ -131,9 +144,9 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_humidity"
+            style="@style/TextViewPrimary"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            style="@style/TextViewPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/iv_icon_humidity"
             app:layout_constraintStart_toEndOf="@+id/iv_icon_humidity"
             app:layout_constraintTop_toTopOf="@+id/iv_icon_humidity"

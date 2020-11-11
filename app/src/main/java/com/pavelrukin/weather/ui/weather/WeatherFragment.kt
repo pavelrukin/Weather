@@ -6,8 +6,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,11 +19,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
@@ -36,15 +31,17 @@ import com.pavelrukin.weather.ui.adapter.DailyAdapter
 import com.pavelrukin.weather.ui.adapter.HourlyAdapter
 import com.pavelrukin.weather.utils.Constants
 import com.pavelrukin.weather.utils.Constants.Companion.AUTOCOMPLETE_REQUEST_CODE
+import com.pavelrukin.weather.utils.Constants.Companion.GPS_REQUEST
+import com.pavelrukin.weather.utils.Constants.Companion.LOCATION_REQUEST
 import com.pavelrukin.weather.utils.Constants.Companion.PNG
 import com.pavelrukin.weather.utils.Constants.Companion.WEATHER_ICON
+import com.pavelrukin.weather.utils.GpsUtils
 import com.pavelrukin.weather.utils.Resource
 import com.pavelrukin.weather.utils.extensions.dateFormat
 import com.pavelrukin.weather.utils.extensions.deleteBrackets
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.weather_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
 import kotlin.math.roundToInt
 
 
@@ -57,10 +54,7 @@ class WeatherFragment : Fragment() {
     lateinit var hourlyAdapter: HourlyAdapter
     lateinit var dailyAdapter: DailyAdapter
 
-    private val permissionCode = 101
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-
-    lateinit var placesClient: PlacesClient
+    private var isGPSEnabled = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,8 +67,8 @@ class WeatherFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.weather_menu_search_city -> seacrhView()
-            R.id.weather_menu_your_current_location -> getCurrentLocation()
+            R.id.weather_menu_search_city -> searchView()
+            R.id.weather_menu_your_current_location -> invokeLocationAction()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -90,21 +84,18 @@ class WeatherFragment : Fragment() {
         // Initialize the SDK
         Places.initialize(activity?.applicationContext!!, Constants.GOOGLE_API_KEY)
         // Create a new PlacesClient instance
-        placesClient = Places.createClient(activity?.applicationContext!!)
-        fusedLocationClient =
-            LocationServices.getFusedLocationProviderClient(activity?.applicationContext!!)
+        //   placesClient = Places.createClient(activity?.applicationContext!!)
+
 
         fetchWeatherFromMap()
 
-    }
 
- /*   fun getCityName(latitude: Double, longitude: Double): String {
-        var cityName = ""
-        val geocoder = Geocoder(activity?.applicationContext, Locale.getDefault())
-        val adress = geocoder.getFromLocation(latitude, longitude, 1)
-        cityName = adress[0].locality!!
-        return cityName
-    }*/
+        GpsUtils(activity?.applicationContext!!).turnGPSOn(object : GpsUtils.OnGpsListener {
+            override fun gpsStatus(isGPSEnable: Boolean) {
+                this@WeatherFragment.isGPSEnabled = isGPSEnable
+            }
+        })
+    }
 
     fun fetchWeatherFromMap() {
         if (args.longitude != null && args.latitude != null) {
@@ -116,7 +107,6 @@ class WeatherFragment : Fragment() {
 
 
     }
-
 
 
     private fun initHourlyRV() {
@@ -140,8 +130,10 @@ class WeatherFragment : Fragment() {
             when (response) {
                 is Resource.Success -> {
                     response.data?.let { result ->
-                            showView()
-                            bindingView(result)
+                        showView()
+                        hideProgressBar()
+                        bindingView(result)
+
                     }
 
                 }
@@ -154,6 +146,7 @@ class WeatherFragment : Fragment() {
                 }
                 is Resource.Loading -> {
                     hideView()
+                    showProgressBar()
                 }
             }
         })
@@ -161,7 +154,7 @@ class WeatherFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun bindingView(result: OneCallResponse) {
-binding.tvCityName.text = viewModel.getCityName(result.lat,result.lon)
+        binding.tvCityName.text = viewModel.getCityName(result.lat, result.lon)
 
         binding.tvMinTemp.text = result.daily[0].temp.min.roundToInt()
             .toString() + getString(R.string.celsius)
@@ -307,68 +300,122 @@ binding.tvCityName.text = viewModel.getCityName(result.lat,result.lon)
 
     }
 
-    private fun getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                activity?.applicationContext!!, Manifest.permission.ACCESS_FINE_LOCATION
-            ) !=
-            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                activity?.applicationContext!!, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) !=
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), permissionCode
-            )
-            return
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                viewModel.getOneCallWeather(lat = location?.latitude, lon = location?.longitude)
-            }
-    }
 
-    fun seacrhView() {
+    fun searchView() {
         val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
         val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
             .build(activity?.applicationContext!!)
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
     }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            when (resultCode) {
-                Activity.RESULT_OK -> {
-                    data?.let {
-                        val place = Autocomplete.getPlaceFromIntent(data)
-                        Log.i(
-                            TAG,
-                            "Place: ${place.name}, ${place.id} " +
-                                    "time ${place.addressComponents} " +
-                                    "latlng ${place.latLng?.latitude.toString()} ||  ${place.latLng?.longitude.toString()} "
-                        )
+    private fun invokeLocationAction() {
 
-                        viewModel.getOneCallWeather(
-                            lat = place.latLng?.latitude,
-                            lon = place.latLng?.longitude
-                        )
-                        //    viewModel.getCurrentWeather(place.name)
-                    }
-                }
-                AutocompleteActivity.RESULT_ERROR -> {
-                    // TODO: Handle the error.
-                    data?.let {
-                        val status = Autocomplete.getStatusFromIntent(data)
-                        Log.i(TAG, status.statusMessage!!)
-                    }
-                }
-                Activity.RESULT_CANCELED -> {
-                    // The user canceled the operation.
-                }
+        when {
+            !isGPSEnabled -> Toast.makeText(
+                activity,
+                getString(R.string.enable_gps),
+                Toast.LENGTH_SHORT
+            ).show()
+            isPermissionsGranted() -> startLocationUpdate()
+            shouldShowRequestPermissionRationale() -> Toast.makeText(
+                activity,
+                getString(R.string.permission_request),
+                Toast.LENGTH_SHORT
+            ).show()
+            else -> ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_REQUEST
+            )
+        }
+    }
+
+    private fun startLocationUpdate() {
+        viewModel.getLocationData().observe(viewLifecycleOwner, {
+            viewModel.getOneCallWeather(it.latitude, it.longitude)
+        })
+    }
+
+    private fun isPermissionsGranted() =
+        ActivityCompat.checkSelfPermission(
+            requireActivity(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(
+                    requireActivity(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+
+    private fun shouldShowRequestPermissionRationale() =
+        ActivityCompat.shouldShowRequestPermissionRationale(
+            requireActivity(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) && ActivityCompat.shouldShowRequestPermissionRationale(
+            requireActivity(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            LOCATION_REQUEST -> {
+                invokeLocationAction()
             }
-            return
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            AUTOCOMPLETE_REQUEST_CODE ->
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        data?.let {
+                            val place = Autocomplete.getPlaceFromIntent(data)
+                            viewModel.getOneCallWeather(
+                                lat = place.latLng?.latitude,
+                                lon = place.latLng?.longitude
+                            )
+                        }
+                    }
+                    AutocompleteActivity.RESULT_ERROR -> {
+                        //  Handle the error.
+                        data?.let {
+                            val status = Autocomplete.getStatusFromIntent(data)
+                            Log.i(TAG, status.statusMessage!!)
+                        }
+                    }
+                    Activity.RESULT_CANCELED -> {
+                        // The user canceled the operation.
+                    }
+                }
+            else -> return
+            //NextRequestCode
+        }
+        when (resultCode) {
+            Activity.RESULT_OK ->
+                if (requestCode == GPS_REQUEST) {
+                    isGPSEnabled = true
+                    invokeLocationAction()
+                }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+
+    fun hideProgressBar() {
+        binding.progressBar.visibility = View.INVISIBLE
+    }
+
+    fun showProgressBar() {
+        binding.progressBar.visibility = View.VISIBLE
     }
 
     fun hideView() {
@@ -376,6 +423,16 @@ binding.tvCityName.text = viewModel.getCityName(result.lat,result.lon)
             ivIconTemp.visibility = View.INVISIBLE
             ivIconHumidity.visibility = View.INVISIBLE
             ivIconWind.visibility = View.INVISIBLE
+            ivIconWindDestination.visibility = View.INVISIBLE
+            rvDaily.visibility = View.INVISIBLE
+            rvHourly.visibility = View.INVISIBLE
+            ivIconWeather.visibility = View.INVISIBLE
+            tvCityName.visibility = View.INVISIBLE
+            tvDate.visibility = View.INVISIBLE
+            tvHumidity.visibility = View.INVISIBLE
+            tvMaxTemp.visibility = View.INVISIBLE
+            tvMinTemp.visibility = View.INVISIBLE
+            tvWindText.visibility = View.INVISIBLE
         }
     }
 
@@ -384,8 +441,22 @@ binding.tvCityName.text = viewModel.getCityName(result.lat,result.lon)
             ivIconTemp.visibility = View.VISIBLE
             ivIconHumidity.visibility = View.VISIBLE
             ivIconWind.visibility = View.VISIBLE
+            ivIconTemp.visibility = View.VISIBLE
+            ivIconHumidity.visibility = View.VISIBLE
+            ivIconWindDestination.visibility = View.VISIBLE
+            rvDaily.visibility = View.VISIBLE
+            rvHourly.visibility = View.VISIBLE
+            ivIconWeather.visibility = View.VISIBLE
+            tvCityName.visibility = View.VISIBLE
+            tvDate.visibility = View.VISIBLE
+            tvHumidity.visibility = View.VISIBLE
+            tvMaxTemp.visibility = View.VISIBLE
+            tvMinTemp.visibility = View.VISIBLE
+            tvWindText.visibility = View.VISIBLE
         }
     }
+
+
 }
 
 

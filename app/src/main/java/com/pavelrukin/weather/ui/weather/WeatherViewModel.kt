@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.pavelrukin.weather.WeatherApp
 import com.pavelrukin.weather.model.current.CurrentResponse
 import com.pavelrukin.weather.model.one_call.OneCallResponse
+import com.pavelrukin.weather.repository.LocationLiveDataRepository
 import com.pavelrukin.weather.repository.WeatherRepository
 import com.pavelrukin.weather.utils.Resource
 import com.pavelrukin.weather.utils.extensions.isConnected
@@ -16,8 +17,12 @@ import retrofit2.Response
 import java.io.IOException
 import java.util.*
 
-class WeatherViewModel(val repository: WeatherRepository, app: WeatherApp) :
+class WeatherViewModel( val locationLiveDataRepository: LocationLiveDataRepository, val repository: WeatherRepository, app: WeatherApp) :
     AndroidViewModel(app) {
+
+
+
+    fun getLocationData() = locationLiveDataRepository
 
     val currentWeather: MutableLiveData<Resource<CurrentResponse>> = MutableLiveData()
     var currentWeatherResponse: CurrentResponse? = null
@@ -101,7 +106,7 @@ class WeatherViewModel(val repository: WeatherRepository, app: WeatherApp) :
         try{
             if(adress[0].locality != null) {
                 cityName = adress[0].locality
-            }else{ }
+            }
         }catch(e:IOException) {
             Log.d("TAG_ViewModel","getCity $e")
         }
