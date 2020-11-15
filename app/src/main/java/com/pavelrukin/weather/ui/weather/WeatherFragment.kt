@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -37,9 +36,7 @@ import com.pavelrukin.weather.utils.Constants.Companion.PNG
 import com.pavelrukin.weather.utils.Constants.Companion.WEATHER_ICON
 import com.pavelrukin.weather.utils.GpsUtils
 import com.pavelrukin.weather.utils.Resource
-import com.pavelrukin.weather.utils.extensions.dateFormat
-import com.pavelrukin.weather.utils.extensions.deleteBrackets
-import com.squareup.picasso.Picasso
+import com.pavelrukin.weather.utils.extensions.*
 import kotlinx.android.synthetic.main.weather_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.math.roundToInt
@@ -155,7 +152,6 @@ class WeatherFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun bindingView(result: OneCallResponse) {
         binding.tvCityName.text = viewModel.getCityName(result.lat, result.lon)
-
         binding.tvMinTemp.text = result.daily[0].temp.min.roundToInt()
             .toString() + getString(R.string.celsius)
         binding.tvHumidity.text =
@@ -171,132 +167,13 @@ class WeatherFragment : Fragment() {
 
         //wind destination
         val windDestinationPath = result.current.windDeg
-        binding.ivIconWindDestination.apply {
-            when (windDestinationPath) {
-                0, 360 -> Picasso.get().load(R.drawable.ic_icon_wind_n)
-                    .placeholder(R.drawable.ic_icon_wind_n)
-                    .into(binding.ivIconWindDestination)
-                in 1..89 -> Picasso.get().load(R.drawable.ic_icon_wind_ne)
-                    .placeholder(R.drawable.ic_icon_wind_ne)
-                    .into(binding.ivIconWindDestination)
-                90 -> Picasso.get().load(R.drawable.ic_icon_wind_e)
-                    .placeholder(R.drawable.ic_icon_wind_e)
-                    .into(binding.ivIconWindDestination)
-                in 91..179 -> Picasso.get().load(R.drawable.ic_icon_wind_se)
-                    .placeholder(R.drawable.ic_icon_wind_se)
-                    .into(binding.ivIconWindDestination)
-                180 -> Picasso.get().load(R.drawable.ic_icon_wind_s)
-                    .placeholder(R.drawable.ic_icon_wind_s)
-                    .into(binding.ivIconWindDestination)
-                in 181..269 -> Picasso.get().load(R.drawable.ic_icon_wind_ws)
-                    .placeholder(R.drawable.ic_icon_wind_ws)
-                    .into(binding.ivIconWindDestination)
-                270 -> Picasso.get().load(R.drawable.ic_icon_wind_w)
-                    .placeholder(R.drawable.ic_icon_wind_w)
-                    .into(binding.ivIconWindDestination)
-                in 271..359 -> Picasso.get().load(R.drawable.ic_icon_wind_wn)
-                    .placeholder(R.drawable.ic_icon_wind_wn)
-                    .into(binding.ivIconWindDestination)
-            }
-
-        }
+        getWindDestination(windDestinationPath, binding.ivIconWindDestination)
 
         //weather icon
         val weatherIdPath = result.current.weather.map { it.id }
         val iconString = result.current.weather.map { it.icon }.toString()
             .deleteBrackets()
-        val iconPath = WEATHER_ICON + iconString + PNG
-
-        binding.ivIconWeather.apply {
-            weatherIdPath.forEach { weatherId ->
-
-                when (weatherId) {
-                    200, 201, 202, 210, 211, 212, 221, 230, 231, 232 ->
-                        if (iconString == "11d")
-                            binding.ivIconWeather.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    context,
-                                    R.drawable.ic_white_thunder
-                                )
-                            )
-                    300, 301, 302, 310, 311, 312, 313, 314, 321 ->
-                        binding.ivIconWeather.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_white_day_shower
-                            )
-                        )
-                    500, 501, 502, 503, 504, 520, 521, 522, 531 ->
-                        if (iconPath == "10d") {
-                            binding.ivIconWeather.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    context,
-                                    R.drawable.ic_white_day_rain
-                                )
-                            )
-                        } else {
-                            binding.ivIconWeather.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    context,
-                                    R.drawable.ic_white_night_rain
-                                )
-                            )
-                        }
-                    511, 600, 601, 602, 611, 612, 613, 615, 616, 620, 621, 622 -> binding.ivIconWeather.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            context,
-                            R.drawable.ic_white_weather_snow
-                        )
-                    )
-                    701, 711, 721, 731, 741, 751, 761, 762, 771, 781 -> binding.ivIconWeather.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            context,
-                            R.drawable.ic_white_weather_fog
-                        )
-                    )
-                    800 ->
-                        if (iconPath == "01d") {
-                            binding.ivIconWeather.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    context,
-                                    R.drawable.ic_white_day_bright
-                                )
-                            )
-                        } else {
-                            binding.ivIconWeather.setImageDrawable(
-                                ContextCompat.getDrawable(
-                                    context,
-                                    R.drawable.ic_white_night_bright
-                                )
-                            )
-                        }
-                    801 -> if (iconPath == "02d") {
-                        binding.ivIconWeather.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_white_day_cloudy
-                            )
-                        )
-                    } else {
-                        binding.ivIconWeather.setImageDrawable(
-                            ContextCompat.getDrawable(
-                                context,
-                                R.drawable.ic_white_night_cloudy
-                            )
-                        )
-                    }
-                    802, 803, 804 -> binding.ivIconWeather.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            context,
-                            R.drawable.ic_white_weather_cloud
-                        )
-                    )
-                    else -> Picasso.get().load(iconPath)
-                        .into(binding.ivIconWeather)
-
-                }
-            }
-        }
+        getWeatherIconWhite(weatherIdPath, iconString, binding.ivIconWeather,activity?.applicationContext!!)
 
     }
 

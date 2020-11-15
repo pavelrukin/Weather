@@ -14,8 +14,8 @@ data class OneCallResponse(
     var timezoneOffset: Int, // -21600
     @SerializedName("current")
     var current: Current,
-    @SerializedName("minutely")
-    var minutely: List<Minutely>,
+/*    @SerializedName("minutely")
+    var minutely: List<Minutely>,*/
     @SerializedName("hourly")
     var hourly: MutableList<Hourly>,
     @SerializedName("daily")
@@ -64,13 +64,13 @@ data class OneCallResponse(
         )
 
     }
-
+/*
     data class Minutely(
         @SerializedName("dt")
         var dt: Long, // 1604566260
         @SerializedName("precipitation")
         var precipitation: Int // 0
-    )
+    )*/
 
     data class Hourly(
         @SerializedName("dt")
@@ -84,7 +84,7 @@ data class OneCallResponse(
         @SerializedName("humidity")
         var humidity: Int, // 54
         @SerializedName("dew_point")
-        var dewPoint: Double, // 2.91
+    var dewPoint: Double, // 2.91
         @SerializedName("clouds")
         var clouds: Int, // 1
         @SerializedName("visibility")
@@ -95,7 +95,7 @@ data class OneCallResponse(
         var windDeg: Int, // 180
         @SerializedName("weather")
         var weather: List<Weather>,
-        @SerializedName("pop")
+     @SerializedName("pop")
         var pop: Double, // 0
         @SerializedName("rain")
         var rain: Rain
