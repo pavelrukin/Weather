@@ -10,23 +10,6 @@ import com.pavelrukin.weather.R
 import com.pavelrukin.weather.utils.Constants
 import com.squareup.picasso.Picasso
 
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
-        }
-    })
-
-
-}
-
-
 fun getWindDestination(windDestination: Int, imageView: AppCompatImageView) {
     when (windDestination) {
         0, 360 -> Picasso.get().load(R.drawable.ic_icon_wind_n)

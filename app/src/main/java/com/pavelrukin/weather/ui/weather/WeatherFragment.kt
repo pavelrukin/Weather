@@ -94,7 +94,8 @@ class WeatherFragment : Fragment() {
         })
     }
 
-    fun fetchWeatherFromMap() {
+      fun fetchWeatherFromMap() {
+
         if (args.longitude != null && args.latitude != null) {
 
             val latitude = args.latitude?.toDouble()
