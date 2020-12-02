@@ -1,11 +1,12 @@
 package com.pavelrukin.weather.repository
 
-import com.pavelrukin.weather.model.current.CurrentResponse
+import androidx.lifecycle.MutableLiveData
 import com.pavelrukin.weather.model.one_call.OneCallResponse
+import com.pavelrukin.weather.utils.Resource
 import retrofit2.Response
 
 interface IWeatherRepository {
-
-    suspend fun getCurrentWeather(cityName:String): Response<CurrentResponse>
-    suspend fun getOneCallWeather(lat:Double,lon:Double):Response<OneCallResponse>
+    val oneCallWeather: MutableLiveData<Resource<OneCallResponse>>
+    suspend fun getOneCallWeather(lat: Double?, lon: Double?)
+      fun handledOneCallWeatherHourly(response: Response<OneCallResponse>): Resource<OneCallResponse>?
 }

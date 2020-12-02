@@ -212,9 +212,7 @@ class WeatherFragment : Fragment() {
     }
 
     private fun startLocationUpdate() {
-        viewModel.getLocationData().observe(viewLifecycleOwner, {
-            viewModel.getOneCallWeather(it.latitude, it.longitude)
-        })
+        viewModel.getLocationData()
     }
 
     private fun isPermissionsGranted() =
