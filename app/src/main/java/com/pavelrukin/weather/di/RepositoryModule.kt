@@ -17,7 +17,7 @@ val repositoryModule = module {
         WeatherRepository(app = androidContext()as WeatherApp ,get())
     }
     single { LocationLiveDataRepository(app = androidContext() as WeatherApp) }
-    single { GpsUtils(get()) }
+      single { GpsUtils(androidContext()) }
     single <IApiHelper>{ ApiHelper(get() )   }
 
 }

@@ -11,14 +11,13 @@ import com.pavelrukin.weather.WeatherApp
 import com.pavelrukin.weather.model.LocationModel
 
 class LocationLiveDataRepository(app: WeatherApp) : LiveData<LocationModel>() {
-
+var TAG = "LocationLiveDataRepository"
     private var fusedLocationClient = LocationServices.getFusedLocationProviderClient(app)
 
     override fun onInactive() {
         super.onInactive()
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
-
 
     @SuppressLint("MissingPermission")
     override fun onActive() {
@@ -30,6 +29,7 @@ class LocationLiveDataRepository(app: WeatherApp) : LiveData<LocationModel>() {
                 }
             }
         startLocationUpdates()
+
     }
 
      @SuppressLint("MissingPermission")
@@ -37,17 +37,18 @@ class LocationLiveDataRepository(app: WeatherApp) : LiveData<LocationModel>() {
         fusedLocationClient.requestLocationUpdates(
             locationRequest,
             locationCallback,
-            null
+           null
         )
     }
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult?) {
             locationResult ?: return
-            for (location in locationResult.locations) {
+           /* for (location in locationResult.locations) {
                 setLocationData(location)
-            }
+            }*/
         }
+
     }
 
     private fun setLocationData(location: Location) {
@@ -59,8 +60,9 @@ class LocationLiveDataRepository(app: WeatherApp) : LiveData<LocationModel>() {
 
     companion object {
         val locationRequest: LocationRequest = LocationRequest.create().apply {
-          /*  interval = 10000
-            fastestInterval = 5000*/
+          interval = 0
+            fastestInterval = 0
+            numUpdates = 1
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
     }

@@ -29,16 +29,15 @@ val TAG = "GPS_Util"
         builder.setAlwaysShow(true)
     }
 
-    fun turnGPSOn(OnGpsListener: OnGpsListener?) {
-
+    fun turnGPSOn(onGpsListener: OnGpsListener?) {
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            OnGpsListener?.gpsStatus(true)
+            onGpsListener?.gpsStatus(true)
         } else {
             settingsClient
                 .checkLocationSettings(locationSettingsRequest)
                 .addOnSuccessListener(context as Activity) {
                     //  GPS is already enable, callback GPS status through listener
-                    OnGpsListener?.gpsStatus(true)
+                    onGpsListener?.gpsStatus(true)
                 }
                 .addOnFailureListener(context) { e ->
                     when ((e as ApiException).statusCode) {

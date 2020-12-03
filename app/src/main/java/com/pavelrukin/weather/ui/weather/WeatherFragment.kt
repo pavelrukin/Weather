@@ -23,7 +23,6 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.google.android.play.core.internal.i
 import com.pavelrukin.weather.R
 import com.pavelrukin.weather.databinding.WeatherFragmentBinding
 import com.pavelrukin.weather.model.one_call.OneCallResponse
@@ -33,14 +32,11 @@ import com.pavelrukin.weather.utils.Constants
 import com.pavelrukin.weather.utils.Constants.Companion.AUTOCOMPLETE_REQUEST_CODE
 import com.pavelrukin.weather.utils.Constants.Companion.GPS_REQUEST
 import com.pavelrukin.weather.utils.Constants.Companion.LOCATION_REQUEST
-import com.pavelrukin.weather.utils.Constants.Companion.PNG
-import com.pavelrukin.weather.utils.Constants.Companion.WEATHER_ICON
 import com.pavelrukin.weather.utils.GpsUtils
 import com.pavelrukin.weather.utils.Resource
 import com.pavelrukin.weather.utils.extensions.*
 import kotlinx.android.synthetic.main.weather_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.math.log
 import kotlin.math.roundToInt
 
 
@@ -88,7 +84,6 @@ class WeatherFragment : Fragment() {
 
         fetchWeatherFromMap()
 
-
         GpsUtils(activity?.applicationContext!!).turnGPSOn(object : GpsUtils.OnGpsListener {
             override fun gpsStatus(isGPSEnable: Boolean) {
                 this@WeatherFragment.isGPSEnabled = isGPSEnable
@@ -96,7 +91,7 @@ class WeatherFragment : Fragment() {
         })
     }
 
-      private fun fetchWeatherFromMap() {
+    private fun fetchWeatherFromMap() {
         if (args.longitude != null && args.latitude != null) {
             val latitude = args.latitude?.toDouble()
             val longitude = args.longitude?.toDouble()
@@ -160,7 +155,7 @@ class WeatherFragment : Fragment() {
             .toString() + " " + getString(R.string.wind_text)
         //recycler views
         dailyAdapter.differ.submitList(result.daily)
-       hourlyAdapter.differ.submitList(result.hourly.filterIndexed { index, hourly -> index % 2 == 0  })
+        hourlyAdapter.differ.submitList(result.hourly.filterIndexed { index, hourly -> index % 2 == 0 })
         //wind destination
         val windDestinationPath = result.current.windDeg
         getWindDestination(windDestinationPath, binding.ivIconWindDestination)
@@ -168,9 +163,13 @@ class WeatherFragment : Fragment() {
         val weatherIdPath = result.current.weather.map { it.id }
         val iconString = result.current.weather.map { it.icon }.toString()
             .deleteBrackets()
-        getWeatherIconWhite(weatherIdPath, iconString, binding.ivIconWeather,activity?.applicationContext!!)
+        getWeatherIconWhite(
+            weatherIdPath,
+            iconString,
+            binding.ivIconWeather,
+            activity?.applicationContext!!
+        )
     }
-
 
     fun searchView() {
         val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)

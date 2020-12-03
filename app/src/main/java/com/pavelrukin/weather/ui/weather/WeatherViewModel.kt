@@ -6,13 +6,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.pavelrukin.weather.WeatherApp
-import com.pavelrukin.weather.model.current.CurrentResponse
 import com.pavelrukin.weather.model.one_call.OneCallResponse
 import com.pavelrukin.weather.repository.IWeatherRepository
 import com.pavelrukin.weather.repository.LocationLiveDataRepository
-import com.pavelrukin.weather.repository.WeatherRepository
 import com.pavelrukin.weather.utils.Resource
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
@@ -27,52 +24,12 @@ class WeatherViewModel(
     val oneCallWeather: MutableLiveData<Resource<OneCallResponse>> = weatherRepository.oneCallWeather
 
     fun getOneCallWeather(lat: Double?, lon: Double?) = viewModelScope.launch {
-
         weatherRepository.getOneCallWeather(lat, lon)
-
     }
-
 
     fun     getLocationData() = locationLiveDataRepository.observeForever {
         getOneCallWeather(it.latitude, it.longitude)
     }
-
-    val currentWeather: MutableLiveData<Resource<CurrentResponse>> = MutableLiveData()
-    var currentWeatherResponse: CurrentResponse? = null
-
-/*     val oneCallWeather: MutableLiveData<Resource<OneCallResponse>> = MutableLiveData()
-    var oneCallWeatherResponse: OneCallResponse? = null*/
-
-    /*   fun getCurrentWeather(cityName: String?) = viewModelScope.launch {
-           currentWeather.postValue(Resource.Loading())
-           try {
-               if (getApplication<WeatherApp>().isConnected) {
-                   currentWeather.postValue(Resource.Loading())
-                   val response = repository.getCurrentWeather(cityName!!)
-                   currentWeather.postValue(handledCurrentWeather(response))
-               } else {
-                   currentWeather.postValue(Resource.Error("No internet connection"))
-               }
-
-           } catch (t: Throwable) {
-               when (t) {
-                   is IOException -> currentWeather.postValue(Resource.Error("Networ Failure"))
-                   else -> currentWeather.postValue(Resource.Error("Conversion Error"))
-               }
-           }
-       }
-
-       private fun handledCurrentWeather(response: Response<CurrentResponse>): Resource<CurrentResponse>? {
-           if (response.isSuccessful) {
-               response.body()?.let { resultResponse ->
-                   if (currentWeatherResponse == null) {
-                       currentWeatherResponse = resultResponse
-                   }
-                   return Resource.Success(resultResponse)
-               }
-           }
-           return Resource.Error(response.message())
-       }*/
 
 
     fun getCityName(latitude: Double, longitude: Double): String {
