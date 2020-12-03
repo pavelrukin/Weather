@@ -23,6 +23,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.play.core.internal.i
 import com.pavelrukin.weather.R
 import com.pavelrukin.weather.databinding.WeatherFragmentBinding
 import com.pavelrukin.weather.model.one_call.OneCallResponse
@@ -39,6 +40,7 @@ import com.pavelrukin.weather.utils.Resource
 import com.pavelrukin.weather.utils.extensions.*
 import kotlinx.android.synthetic.main.weather_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.math.log
 import kotlin.math.roundToInt
 
 
@@ -94,16 +96,12 @@ class WeatherFragment : Fragment() {
         })
     }
 
-      fun fetchWeatherFromMap() {
-
+      private fun fetchWeatherFromMap() {
         if (args.longitude != null && args.latitude != null) {
-
             val latitude = args.latitude?.toDouble()
             val longitude = args.longitude?.toDouble()
             viewModel.getOneCallWeather(lat = latitude, lon = longitude)
         }
-
-
     }
 
 
@@ -131,9 +129,7 @@ class WeatherFragment : Fragment() {
                         showView()
                         hideProgressBar()
                         bindingView(result)
-
                     }
-
                 }
                 is Resource.Error -> {
                     response.message?.let { message ->
@@ -164,18 +160,15 @@ class WeatherFragment : Fragment() {
             .toString() + " " + getString(R.string.wind_text)
         //recycler views
         dailyAdapter.differ.submitList(result.daily)
-        hourlyAdapter.differ.submitList(result.hourly)
-
+       hourlyAdapter.differ.submitList(result.hourly.filterIndexed { index, hourly -> index % 2 == 0  })
         //wind destination
         val windDestinationPath = result.current.windDeg
         getWindDestination(windDestinationPath, binding.ivIconWindDestination)
-
         //weather icon
         val weatherIdPath = result.current.weather.map { it.id }
         val iconString = result.current.weather.map { it.icon }.toString()
             .deleteBrackets()
         getWeatherIconWhite(weatherIdPath, iconString, binding.ivIconWeather,activity?.applicationContext!!)
-
     }
 
 
@@ -187,7 +180,6 @@ class WeatherFragment : Fragment() {
     }
 
     private fun invokeLocationAction() {
-
         when {
             !isGPSEnabled -> Toast.makeText(
                 activity,
